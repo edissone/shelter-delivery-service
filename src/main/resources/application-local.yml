@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: delivery-service
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sds-storage
+    username: sdsUSER
+    password: pgPWDsdsUSER!
+  flyway:
+    baseline-on-migrate: false
+    enabled: true
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+server:
+  port: 8080

@@ -4,8 +4,8 @@ create table users
     full_name varchar(60)             not null,
     phone     varchar(13),
     role      varchar(10) default 'CUSTOMER',
-        constraint tg_id_uq
-            unique (tg_id)
+    constraint tg_id_uq
+        unique (tg_id)
 );
 
 create table positions
@@ -29,6 +29,7 @@ create table orders
     notes          varchar(200),
     amount         float      default 0,
     payback_from   float      default 0,
+    payment_code   varchar(6),
     status         smallint   default 100,
     payment_type   varchar(4) default 'CARD',
     delivery_type  varchar(8) default 'DELIVERY',
@@ -40,7 +41,5 @@ create table orders
     constraint sid_fk
         foreign key (supplier_id) references users (tg_id),
     constraint did_fk
-        foreign key (delivery_id_id) references users (tg_id)
+        foreign key (delivery_id) references users (tg_id)
 );
-
--- CREATED -- 100, CONFIRMED, 200, PREPARING 210 , GOING, 300, DELIVERED, 400
