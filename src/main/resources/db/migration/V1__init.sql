@@ -1,21 +1,24 @@
 create table users
 (
-    tg_id     varchar(12) primary key not null,
-    full_name varchar(60)             not null,
+    id        serial primary key,
+    tg_id     varchar(12) not null,
+    full_name varchar(60) not null,
     phone     varchar(13),
     role      varchar(10) default 'CUSTOMER',
-    constraint tg_id_uq
+    address   varchar(255),
+    constraint tg_uq
         unique (tg_id)
 );
 
 create table positions
 (
     id          serial primary key,
-    p_name      varchar(30) not null,
-    category    varchar(15) not null,
-    description varchar(200),
+    p_name      varchar(40) not null,
+    category    varchar(30) not null,
+    description varchar(250),
     price       float default 0,
-    weight      varchar(20),
+    weight      varchar(30),
+    image       varchar(50),
     constraint p_name_uq
         unique (p_name)
 );
@@ -30,7 +33,7 @@ create table orders
     amount         float      default 0,
     payback_from   float      default 0,
     payment_code   varchar(6),
-    status         smallint   default 100,
+--     status         smallint   default 100,
     payment_type   varchar(4) default 'CARD',
     delivery_type  varchar(8) default 'DELIVERY',
     positions      jsonb       not null,

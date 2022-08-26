@@ -5,10 +5,14 @@ import od.shelter.deliveryservice.dao.model.jsonb.DeliveryInfo;
 import od.shelter.deliveryservice.dao.model.jsonb.OrderLog;
 import od.shelter.deliveryservice.dao.model.jsonb.PositionStub;
 import od.shelter.deliveryservice.utils.model.DeliveryType;
+import od.shelter.deliveryservice.utils.model.OrderStatus;
 import od.shelter.deliveryservice.utils.model.PaymentType;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Data
@@ -38,9 +42,6 @@ public class Order extends BaseEntity {
     @Column(name = "payment_code")
     private String paymentCode;
 
-    @Column(name = "status")
-    private Short status;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_type")
     private PaymentType paymentType;
@@ -50,6 +51,7 @@ public class Order extends BaseEntity {
     private DeliveryType deliveryType;
 
     @Type(type = "jsonb")
+    @Singular
     @Column(name = "positions")
     private List<PositionStub> positions;
 
@@ -58,8 +60,9 @@ public class Order extends BaseEntity {
     private DeliveryInfo deliveryInfo;
 
     @Type(type = "jsonb")
+    @Singular
     @Column(name = "order_logs")
-    private List<OrderLog> logs;
+    private List<OrderLog> logs = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "order_owner_id", referencedColumnName = "tg_id")
@@ -72,4 +75,16 @@ public class Order extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "delivery_id", referencedColumnName = "tg_id")
     private User delivery;
+
+    public OrderLog getCurrentStatus() {
+        return logs.stream()
+                .max(Comparator.comparing(OrderLog::getDate)).stream().findFirst().orElse(null);
+    }
+
+    public void log(OrderStatus status) {
+        logs.add(OrderLog.builder()
+                .status(status)
+                .date(LocalDateTime.now())
+                .build());
+    }
 }

@@ -4,6 +4,7 @@ import lombok.*;
 import od.shelter.deliveryservice.utils.model.Role;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -14,18 +15,24 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @ToString
-public class User {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tg_id", length = 12)
+    @Column(name = "id")
     @EqualsAndHashCode.Exclude
-    private String ID;
+    private Long id;
+
+    @Column(name = "tg_id", length = 12)
+    private String tgID;
 
     @Column(name = "phone", length = 13)
     private String phone;
 
-    @Column(name="fullname", length = 60)
+    @Column(name="full_name", length = 60)
     private String fullName;
+
+    @Column(name = "address", length = 255)
+    private String address;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")

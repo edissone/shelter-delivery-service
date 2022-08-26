@@ -1,5 +1,5 @@
 package od.shelter.deliveryservice.utils.model;
 
 public enum Role {
-    CUSTOMER, SUPPLIER, DELIVERY
+    CUSTOMER, SUPPLIER, DELIVER
 }
