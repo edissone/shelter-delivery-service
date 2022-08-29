@@ -40,8 +40,8 @@ public class OrderController {
     }
 
     @GetMapping("/all")
-    public List<OrderDTO> all(@RequestParam(required = false) OrderStatus status){
-        return service.fetch(status).stream().map(mapper::dto).toList();
+    public List<OrderDTO> all(@RequestParam(required = false) OrderStatus status, @RequestParam(required = false, defaultValue = "false") boolean active){
+        return service.fetch(status, active).stream().map(mapper::dto).toList();
     }
 
     @PutMapping("/assign/{orderID}/{userTGID}")

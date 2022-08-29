@@ -25,5 +25,5 @@ public interface OrderService {
 
     Order decline(Long orderID, String userTGID);
 
-    List<Order> fetch(OrderStatus status);
+    List<Order> fetch(OrderStatus status, boolean active);
 }

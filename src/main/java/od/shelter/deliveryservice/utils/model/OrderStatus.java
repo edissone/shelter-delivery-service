@@ -23,7 +23,7 @@ public enum OrderStatus {
     public static List<OrderStatus> active() {
         return List.of(
                 OrderStatus.CREATED, OrderStatus.ASSIGNED, OrderStatus.CONFIRM,
-                OrderStatus.PREPARING, OrderStatus.GOING, OrderStatus.READY_SELF
+                OrderStatus.PREPARING, OrderStatus.READY_DEL ,OrderStatus.GOING, OrderStatus.READY_SELF
         );
     }
 }

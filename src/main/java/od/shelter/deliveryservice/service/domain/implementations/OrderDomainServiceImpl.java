@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @Service
@@ -130,12 +131,15 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public List<Order> fetch(OrderStatus status) {
-        return status == null ?
+    public List<Order> fetch(OrderStatus status, boolean active) {
+        Predicate<Order> predicate = active ?
+                o -> OrderStatus.active().contains(o.getCurrentStatus().getStatus()) :
+                o -> o.getCurrentStatus().getStatus() == status;
+        return status == null && !active ?
                 repository.findAll() :
                 repository.findAll()
                         .stream()
-                        .filter(o -> o.getCurrentStatus().getStatus() == status).toList();
+                        .filter(predicate).toList();
     }
 
     @Override
@@ -149,7 +153,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     @Transactional
     public Order going(Long orderID) {
         final var order = this.get(orderID);
-        if (order.getDelivery() == null){
+        if (order.getDelivery() == null) {
             throw new UnassignedOrderProcessingException(orderID, Role.DELIVER);
         }
         order.log(OrderStatus.GOING);

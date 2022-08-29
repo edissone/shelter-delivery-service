@@ -95,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> fetch(OrderStatus status) {
+    public List<Order> fetch(OrderStatus status, boolean active) {
         return orderDomainService.fetch(status);
     }
 

@@ -20,7 +20,7 @@ public interface OrderDomainService {
 
     Order decline(Long orderID, User decliner);
 
-    List<Order> fetch(OrderStatus status);
+    List<Order> fetch(OrderStatus status, boolean active);
 
     Order ready(Long orderID);
 
