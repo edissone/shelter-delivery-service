@@ -23,6 +23,8 @@ public interface OrderService {
 
     Order delivered(Long orderID, String userTGID);
 
+    Order gotSelf(Long orderID, String userTGID);
+
     Order decline(Long orderID, String userTGID);
 
     List<Order> fetch(OrderStatus status, boolean active);

@@ -89,6 +89,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order gotSelf(Long orderID, String userTGID) {
+        verifyUser(orderID, userTGID, Role.SUPPLIER);
+        return orderDomainService.gotSelf(orderID);
+    }
+
+    @Override
     public Order decline(Long orderID, String userTGID) {
         final var decliner = userDomainService.get(userTGID);
         return orderDomainService.decline(orderID, decliner);
@@ -96,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> fetch(OrderStatus status, boolean active) {
-        return orderDomainService.fetch(status);
+        return orderDomainService.fetch(status, active);
     }
 
     private void populatePositionStubs(Map<Long, Position> map, List<PositionStub> list) {

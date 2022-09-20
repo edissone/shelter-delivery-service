@@ -5,8 +5,11 @@ import od.shelter.deliveryservice.dao.model.User;
 import od.shelter.deliveryservice.dto.UserDTO;
 import od.shelter.deliveryservice.service.UserService;
 import od.shelter.deliveryservice.service.domain.UserDomainService;
+import od.shelter.deliveryservice.utils.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -39,5 +42,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(String id, UserDTO dto) {
         return userDomainService.update(id, dto);
+    }
+
+    @Override
+    public List<User> fetch(Role role) {
+        return userDomainService.fetch(role);
     }
 }

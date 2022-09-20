@@ -2,7 +2,10 @@ package od.shelter.deliveryservice.utils.model;
 
 import lombok.Getter;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 public enum OrderStatus {
@@ -21,9 +24,9 @@ public enum OrderStatus {
     }
 
     public static List<OrderStatus> active() {
-        return List.of(
+        return Stream.of(
                 OrderStatus.CREATED, OrderStatus.ASSIGNED, OrderStatus.CONFIRM,
                 OrderStatus.PREPARING, OrderStatus.READY_DEL ,OrderStatus.GOING, OrderStatus.READY_SELF
-        );
+        ).sorted(Comparator.comparing(OrderStatus::getCode)).collect(Collectors.toList());
     }
 }
