@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -74,11 +75,9 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     public Order confirm(Long orderID, User assignedSupplier) {
         final var order = this.get(orderID);
         final var statusCode = order.getCurrentStatus().getStatus().getCode();
-        final var confirmCode = OrderStatus.CONFIRM.getCode();
-        final var assignedCode = OrderStatus.ASSIGNED.getCode();
+        final var prev = OrderStatus.ASSIGNED.getCode();
 
-        verifyState(order, statusCode, confirmCode, "BEFORE CONFIRMATION", false);
-        verifyState(order, statusCode, assignedCode, "AFTER CONFIRMATION", true);
+        verifyState(order, statusCode, List.of(prev), "BEFORE CONFIRMATION", true);
 
         if (!order.getSupplier().equals(assignedSupplier)) {
             throw new PermissionDeniedException(assignedSupplier.getTgID(), assignedSupplier.getRole(), orderID);
@@ -94,9 +93,9 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     public Order decline(Long orderID, User decliner) {
         final var order = this.get(orderID);
         final var statusCode = order.getCurrentStatus().getStatus().getCode();
-        final var assignCode = OrderStatus.ASSIGNED.getCode();
+        final var active = OrderStatus.active().stream().map(OrderStatus::getCode).collect(Collectors.toList());
 
-        verifyState(order, statusCode, assignCode, "DECLINING", false);
+        verifyState(order, statusCode, active , "DECLINING", true);
         logByRole(decliner, order);
 
         return repository.save(order);
@@ -165,7 +164,13 @@ public class OrderDomainServiceImpl implements OrderDomainService {
         final var order = this.get(orderID);
         order.log(OrderStatus.DELIVERED);
         return repository.save(order);
+    }
 
+    @Override
+    public Order gotSelf(Long orderID) {
+        final var order = this.get(orderID);
+        order.log(OrderStatus.GOT_SELF);
+        return repository.save(order);
     }
 
     private void processPayment(Order.OrderBuilder order, OrderDTO dto) {
@@ -190,9 +195,8 @@ public class OrderDomainServiceImpl implements OrderDomainService {
                 .orElseThrow(() -> new InvalidComputationException("Amount process was failed :("));
     }
 
-    private void verifyState(Order order, short statusCode, short requiredCode, String stage, boolean greater) {
-        var condition = greater ? statusCode > requiredCode : statusCode < requiredCode;
-        if (condition) {
+    private void verifyState(Order order, short code, List<Short> statuses, String stage, boolean present) {
+        if (present != statuses.contains(code)) {
             throw new InvalidStateException(
                     order.getId(), Order.class, OrderStatus.class,
                     order.getCurrentStatus().getStatus(), stage

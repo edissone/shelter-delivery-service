@@ -1,6 +1,6 @@
 package od.shelter.deliveryservice.dao.model.jsonb;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Data
@@ -9,9 +9,9 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = false)
 @Builder
 @ToString
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class DeliveryInfo {
     private String address;
+    @JsonProperty("full_name")
     private String fullName;
     private String phone;
     private String notes;

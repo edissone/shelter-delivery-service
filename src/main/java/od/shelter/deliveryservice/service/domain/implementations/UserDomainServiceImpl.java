@@ -7,8 +7,11 @@ import od.shelter.deliveryservice.dto.UserDTO;
 import od.shelter.deliveryservice.exception.AlreadyExistsException;
 import od.shelter.deliveryservice.exception.NotFoundException;
 import od.shelter.deliveryservice.service.domain.UserDomainService;
+import od.shelter.deliveryservice.utils.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -59,5 +62,10 @@ public class UserDomainServiceImpl implements UserDomainService {
         updatable.setPhone(dto.getPhone() != null ? dto.getPhone() : updatable.getPhone());
 
         return repository.save(updatable);
+    }
+
+    @Override
+    public List<User> fetch(Role role) {
+        return repository.findAllByRole(role);
     }
 }

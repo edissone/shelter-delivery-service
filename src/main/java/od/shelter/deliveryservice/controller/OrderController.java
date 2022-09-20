@@ -69,8 +69,14 @@ public class OrderController {
         return mapper.dto(service.delivered(orderID, userTGID));
     }
 
+    @PutMapping("/got-self/{orderID}/{userTGID}")
+    public OrderDTO gotSelf(@PathVariable Long orderID, @PathVariable String userTGID){
+        return mapper.dto(service.gotSelf(orderID, userTGID));
+    }
+
     @DeleteMapping("/decline/{orderID}/{userTGID}")
     public OrderDTO decline(@PathVariable Long orderID, @PathVariable String userTGID){
         return mapper.dto(service.decline(orderID, userTGID));
     }
+
 }

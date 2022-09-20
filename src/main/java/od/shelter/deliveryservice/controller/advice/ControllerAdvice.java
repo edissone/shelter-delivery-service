@@ -64,6 +64,13 @@ public class ControllerAdvice {
         return errorResponse(ExceptionCode.ALREADY_EXISTS, exception, req.getRequestURI());
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ErrorResponse handleUnsupportedOperationException(UnsupportedOperationException exception, HttpServletRequest req) {
+        log.error(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
+        return errorResponse(ExceptionCode.PERMISSION_DENIED, exception, req.getRequestURI());
+    }
+
     private ErrorResponse errorResponse(ExceptionCode excCode, RuntimeException exception, String uri) {
         return ErrorResponse.builder()
                 .message(exception.getMessage())
