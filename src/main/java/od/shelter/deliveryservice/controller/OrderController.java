@@ -40,43 +40,47 @@ public class OrderController {
     }
 
     @GetMapping("/all")
-    public List<OrderDTO> all(@RequestParam(required = false) OrderStatus status, @RequestParam(required = false, defaultValue = "false") boolean active){
+    public List<OrderDTO> all(@RequestParam(required = false) OrderStatus status, @RequestParam(required = false, defaultValue = "false") boolean active) {
         return service.fetch(status, active).stream().map(mapper::dto).toList();
     }
 
     @PutMapping("/assign/{orderID}/{userTGID}")
-    public OrderDTO assign(@PathVariable Long orderID, @PathVariable String userTGID){
+    public OrderDTO assign(@PathVariable Long orderID, @PathVariable String userTGID) {
         return mapper.dto(service.assign(orderID, userTGID));
     }
 
     @PutMapping("/confirm/{orderID}/{userTGID}")
-    public OrderDTO confirm(@PathVariable Long orderID, @PathVariable String userTGID){
+    public OrderDTO confirm(@PathVariable Long orderID, @PathVariable String userTGID) {
         return mapper.dto(service.confirm(orderID, userTGID));
     }
 
     @PutMapping("/ready/{orderID}/{userTGID}")
-    public OrderDTO ready(@PathVariable Long orderID, @PathVariable String userTGID){
+    public OrderDTO ready(@PathVariable Long orderID, @PathVariable String userTGID) {
         return mapper.dto(service.ready(orderID, userTGID));
     }
 
     @PutMapping("/going/{orderID}/{userTGID}")
-    public OrderDTO going(@PathVariable Long orderID, @PathVariable String userTGID){
+    public OrderDTO going(@PathVariable Long orderID, @PathVariable String userTGID) {
         return mapper.dto(service.going(orderID, userTGID));
     }
 
     @PutMapping("/delivered/{orderID}/{userTGID}")
-    public OrderDTO delivered(@PathVariable Long orderID, @PathVariable String userTGID){
+    public OrderDTO delivered(@PathVariable Long orderID, @PathVariable String userTGID) {
         return mapper.dto(service.delivered(orderID, userTGID));
     }
 
     @PutMapping("/got-self/{orderID}/{userTGID}")
-    public OrderDTO gotSelf(@PathVariable Long orderID, @PathVariable String userTGID){
+    public OrderDTO gotSelf(@PathVariable Long orderID, @PathVariable String userTGID) {
         return mapper.dto(service.gotSelf(orderID, userTGID));
     }
 
     @DeleteMapping("/decline/{orderID}/{userTGID}")
-    public OrderDTO decline(@PathVariable Long orderID, @PathVariable String userTGID){
+    public OrderDTO decline(@PathVariable Long orderID, @PathVariable String userTGID) {
         return mapper.dto(service.decline(orderID, userTGID));
     }
 
+    @GetMapping("/fetch/assigned/{tgID}")
+    public OrderDTO fetchAssigned(@PathVariable String tgID, @RequestParam boolean active) {
+        return mapper.dto(service.fetchAssigned(tgID, active));
+    }
 }

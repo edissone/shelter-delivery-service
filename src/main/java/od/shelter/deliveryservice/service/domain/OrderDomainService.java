@@ -29,4 +29,6 @@ public interface OrderDomainService {
     Order delivered(Long orderID);
 
     Order gotSelf(Long orderID);
+
+    Order fetchAssigned(User assigned, boolean active);
 }

@@ -38,18 +38,21 @@ public class User implements Serializable {
     @Column(name = "role")
     private Role role;
 
+    @ToString.Exclude
     @OneToMany(
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
             mappedBy = "owner", fetch = FetchType.LAZY
     )
     private List<Order> ordersOwned;
 
+    @ToString.Exclude
     @OneToMany(
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
             mappedBy = "supplier", fetch = FetchType.LAZY
     )
     private List<Order> ordersSupplied;
 
+    @ToString.Exclude
     @OneToMany(
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
             mappedBy = "delivery", fetch = FetchType.LAZY

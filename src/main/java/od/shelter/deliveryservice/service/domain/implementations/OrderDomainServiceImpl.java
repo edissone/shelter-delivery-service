@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -36,17 +35,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 
     @Override
     public Order create(User orderOwner, OrderDTO dto) {
-        final var order = Order.builder()
-                .notes(dto.getNotes())
-                .owner(orderOwner)
-                .deliveryType(dto.getDeliveryType())
-                .paymentType(dto.getPaymentType())
-                .positions(dto.getPositions())
-                .deliveryInfo(dto.getDeliveryInfo())
-                .log(OrderLog.builder()
-                        .status(OrderStatus.CREATED)
-                        .date(LocalDateTime.now())
-                        .build());
+        final var order = Order.builder().notes(dto.getNotes()).owner(orderOwner).deliveryType(dto.getDeliveryType()).paymentType(dto.getPaymentType()).positions(dto.getPositions()).deliveryInfo(dto.getDeliveryInfo()).log(OrderLog.builder().status(OrderStatus.CREATED).date(LocalDateTime.now()).build());
 
         processPayment(order, dto);
         return repository.save(order.build());
@@ -93,9 +82,9 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     public Order decline(Long orderID, User decliner) {
         final var order = this.get(orderID);
         final var statusCode = order.getCurrentStatus().getStatus().getCode();
-        final var active = OrderStatus.active().stream().map(OrderStatus::getCode).collect(Collectors.toList());
+        final var active = OrderStatus.active().stream().map(OrderStatus::getCode).toList();
 
-        verifyState(order, statusCode, active , "DECLINING", true);
+        verifyState(order, statusCode, active, "DECLINING", true);
         logByRole(decliner, order);
 
         return repository.save(order);
@@ -110,7 +99,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
             }
         } else if (user.getRole() == Role.DELIVER && order.getDelivery() == null) {
             order.setDelivery(user);
-            order.log(OrderStatus.GOING);
+            order.log(OrderStatus.ASSIGNED_DEL);
         } else {
             throw new UnsupportedOperationException("This operation is not supported: assign with role: " + user.getRole());
         }
@@ -124,21 +113,14 @@ public class OrderDomainServiceImpl implements OrderDomainService {
         } else if (decliner.getRole() == Role.DELIVER) {
             order.log(OrderStatus.DECLINED_DELIVER);
         } else {
-            throw new UnsupportedOperationException("This operation is not supported: assign with role: " +
-                    decliner.getRole());
+            throw new UnsupportedOperationException("This operation is not supported: assign with role: " + decliner.getRole());
         }
     }
 
     @Override
     public List<Order> fetch(OrderStatus status, boolean active) {
-        Predicate<Order> predicate = active ?
-                o -> OrderStatus.active().contains(o.getCurrentStatus().getStatus()) :
-                o -> o.getCurrentStatus().getStatus() == status;
-        return status == null && !active ?
-                repository.findAll() :
-                repository.findAll()
-                        .stream()
-                        .filter(predicate).toList();
+        Predicate<Order> predicate = active ? o -> OrderStatus.active().contains(o.getCurrentStatus().getStatus()) : o -> o.getCurrentStatus().getStatus() == status;
+        return status == null && !active ? repository.findAll() : repository.findAll().stream().filter(predicate).toList();
     }
 
     @Override
@@ -173,6 +155,24 @@ public class OrderDomainServiceImpl implements OrderDomainService {
         return repository.save(order);
     }
 
+    @Override
+    public Order fetchAssigned(User assigned, boolean active) {
+        var activeStatuses = OrderStatus.active();
+        final var orders = assigned.getRole() == Role.DELIVER ? repository.findByDelivery(assigned) :
+                repository.findBySupplier(assigned);
+        if (!orders.isEmpty()) {
+            if (active) {
+                return orders.stream().filter(o -> activeStatuses.contains(o.getCurrentStatus().getStatus())).findFirst().orElseThrow(
+                        () -> new NotFoundException("ASSIGNED/active", assigned.getId() + '/' + "true", Order.class)
+                );
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        } else {
+            throw new NotFoundException("ASSIGNED/active", assigned.getId() + "/" + "true", Order.class);
+        }
+    }
+
     private void processPayment(Order.OrderBuilder order, OrderDTO dto) {
         final var amount = processAmount(dto.getPositions().stream());
         order.amount(amount);
@@ -190,17 +190,12 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     private double processAmount(Stream<PositionStub> psStream) {
-        return psStream.map(ps -> ps.getCount() * ps.getPrice())
-                .reduce(Double::sum)
-                .orElseThrow(() -> new InvalidComputationException("Amount process was failed :("));
+        return psStream.map(ps -> ps.getCount() * ps.getPrice()).reduce(Double::sum).orElseThrow(() -> new InvalidComputationException("Amount process was failed :("));
     }
 
     private void verifyState(Order order, short code, List<Short> statuses, String stage, boolean present) {
         if (present != statuses.contains(code)) {
-            throw new InvalidStateException(
-                    order.getId(), Order.class, OrderStatus.class,
-                    order.getCurrentStatus().getStatus(), stage
-            );
+            throw new InvalidStateException(order.getId(), Order.class, OrderStatus.class, order.getCurrentStatus().getStatus(), stage);
         }
     }
 }

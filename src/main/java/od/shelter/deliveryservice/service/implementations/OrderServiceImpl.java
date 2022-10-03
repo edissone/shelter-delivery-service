@@ -105,6 +105,13 @@ public class OrderServiceImpl implements OrderService {
         return orderDomainService.fetch(status, active);
     }
 
+    @Override
+    public Order fetchAssigned(String tgID, boolean active) {
+        final var assigned = userDomainService.get(tgID);
+        var result = orderDomainService.fetchAssigned(assigned, active);
+        return result;
+    }
+
     private void populatePositionStubs(Map<Long, Position> map, List<PositionStub> list) {
         list.forEach(
                 ps -> Optional.ofNullable(map.get(ps.getId()))

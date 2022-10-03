@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -46,7 +45,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public UserDTO update(@PathVariable String id, @RequestBody UserDTO dto){
+    public UserDTO update(@PathVariable String id, @RequestBody UserDTO dto) {
         return mapper.dto(service.update(id, dto));
     }
 }

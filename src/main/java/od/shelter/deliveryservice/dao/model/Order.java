@@ -62,16 +62,19 @@ public class Order extends BaseEntity {
     @Type(type = "jsonb")
     @Singular
     @Column(name = "order_logs")
-    private List<OrderLog> logs = new ArrayList<>();
+    private List<OrderLog> logs;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "order_owner_id", referencedColumnName = "tg_id")
     private User owner;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "supplier_id", referencedColumnName = "tg_id")
     private User supplier;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "delivery_id", referencedColumnName = "tg_id")
     private User delivery;
