@@ -13,7 +13,7 @@ public enum OrderStatus {
     CONFIRM((short) 200), PREPARING((short) 210),
     READY_DEL((short) 300), READY_SELF((short) 310),
     ASSIGNED_DEL((short) 400),
-    GOING((short) 410), DELIVERED((short) 500),
+    GOING((short) 410), ARRIVED((short) 420), DELIVERED((short) 500),
     GOT_SELF((short) 510),
     DECLINED_CUSTOMER((short) -100), DECLINED_SUPPLIER((short) -200),
     DECLINED_DELIVER((short) -300);
@@ -27,7 +27,8 @@ public enum OrderStatus {
     public static List<OrderStatus> active() {
         return Stream.of(
                 OrderStatus.CREATED, OrderStatus.ASSIGNED, OrderStatus.CONFIRM,
-                OrderStatus.PREPARING, OrderStatus.READY_DEL, OrderStatus.ASSIGNED_DEL ,OrderStatus.GOING, OrderStatus.READY_SELF
+                OrderStatus.PREPARING, OrderStatus.READY_DEL, OrderStatus.ASSIGNED_DEL, OrderStatus.GOING,
+                OrderStatus.READY_SELF, OrderStatus.ARRIVED
         ).sorted(Comparator.comparing(OrderStatus::getCode)).collect(Collectors.toList());
     }
 }

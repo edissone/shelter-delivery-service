@@ -142,6 +142,13 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
+    public Order arrived(Long orderID) {
+        final var order = this.get(orderID);
+        order.log(OrderStatus.ARRIVED);
+        return repository.save(order);
+    }
+
+    @Override
     public Order delivered(Long orderID) {
         final var order = this.get(orderID);
         order.log(OrderStatus.DELIVERED);

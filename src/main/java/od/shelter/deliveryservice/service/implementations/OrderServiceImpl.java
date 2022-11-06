@@ -16,6 +16,7 @@ import od.shelter.deliveryservice.utils.model.OrderStatus;
 import od.shelter.deliveryservice.utils.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,12 @@ public class OrderServiceImpl implements OrderService {
     public Order going(Long orderID, String userTGID) {
         verifyUser(orderID, userTGID, Role.DELIVER);
         return orderDomainService.going(orderID);
+    }
+
+    @Override
+    public Order arrived(Long orderID, String userTGID) {
+        verifyUser(orderID, userTGID, Role.DELIVER);
+        return orderDomainService.arrived(orderID);
     }
 
     @Override

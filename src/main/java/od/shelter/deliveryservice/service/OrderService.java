@@ -21,6 +21,8 @@ public interface OrderService {
 
     Order going(Long orderID, String userTGID);
 
+    Order arrived(Long orderID, String userTGID);
+
     Order delivered(Long orderID, String userTGID);
 
     Order gotSelf(Long orderID, String userTGID);

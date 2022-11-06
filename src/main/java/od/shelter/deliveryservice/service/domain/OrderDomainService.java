@@ -26,6 +26,8 @@ public interface OrderDomainService {
 
     Order going(Long orderID);
 
+    Order arrived(Long orderID);
+
     Order delivered(Long orderID);
 
     Order gotSelf(Long orderID);

@@ -46,3 +46,12 @@ create table orders
     constraint did_fk
         foreign key (delivery_id) references users (tg_id)
 );
+
+create table resource_params
+(
+    id    serial primary key,
+    key   varchar(15) not null,
+    value varchar(40) not null,
+    constraint key_uq
+        unique (key)
+);

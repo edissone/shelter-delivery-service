@@ -64,6 +64,11 @@ public class OrderController {
         return mapper.dto(service.going(orderID, userTGID));
     }
 
+    @PutMapping("/arrived/{orderID}/{userTGID}")
+    public OrderDTO arrived(@PathVariable Long orderID, @PathVariable String userTGID) {
+        return mapper.dto(service.arrived(orderID, userTGID));
+    }
+
     @PutMapping("/delivered/{orderID}/{userTGID}")
     public OrderDTO delivered(@PathVariable Long orderID, @PathVariable String userTGID) {
         return mapper.dto(service.delivered(orderID, userTGID));
