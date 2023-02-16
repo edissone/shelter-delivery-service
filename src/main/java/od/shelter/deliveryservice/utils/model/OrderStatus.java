@@ -31,4 +31,8 @@ public enum OrderStatus {
                 OrderStatus.READY_SELF, OrderStatus.ARRIVED
         ).sorted(Comparator.comparing(OrderStatus::getCode)).collect(Collectors.toList());
     }
+
+    public static List<OrderStatus> completed() {
+        return List.of(DELIVERED, GOT_SELF);
+    }
 }

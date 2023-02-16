@@ -48,4 +48,14 @@ public class UserServiceImpl implements UserService {
     public List<User> fetch(Role role) {
         return userDomainService.fetch(role);
     }
+
+    @Override
+    public User addDeliver(UserDTO dto) {
+        return userDomainService.addDeliver(dto);
+    }
+
+    @Override
+    public User removeDeliver(String tgID) {
+        return userDomainService.removeDeliver(tgID);
+    }
 }

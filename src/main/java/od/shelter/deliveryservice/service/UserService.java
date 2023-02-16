@@ -16,4 +16,8 @@ public interface UserService {
     User update(String id, UserDTO dto);
 
     List<User> fetch(Role role);
+
+    User addDeliver(UserDTO dto);
+
+    User removeDeliver(String tgID);
 }

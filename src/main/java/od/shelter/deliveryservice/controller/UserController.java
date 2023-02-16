@@ -48,4 +48,14 @@ public class UserController {
     public UserDTO update(@PathVariable String id, @RequestBody UserDTO dto) {
         return mapper.dto(service.update(id, dto));
     }
+
+    @PostMapping("/add-deliver")
+    public UserDTO addDeliver(@RequestBody UserDTO dto) {
+        return mapper.dto(service.addDeliver(dto));
+    }
+
+    @DeleteMapping("/remove-deliver/{id}")
+    public UserDTO removeDeliver(@PathVariable String id) {
+        return mapper.dto(service.removeDeliver(id));
+    }
 }

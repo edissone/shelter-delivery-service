@@ -28,14 +28,8 @@ public class UserDomainServiceImpl implements UserDomainService {
         if (repository.existsByTgID(dto.getTgID())) {
             throw new AlreadyExistsException("tg_id", dto.getTgID(), User.class);
         }
-        var insertable = User.builder()
-                .tgID(dto.getTgID())
-                .phone(dto.getPhone())
-                .fullName(dto.getFullName())
-                .role(dto.getRole())
-                .build();
-        insertable = repository.save(insertable);
-        return insertable;
+
+        return createUser(dto);
     }
 
     @Override
@@ -67,5 +61,44 @@ public class UserDomainServiceImpl implements UserDomainService {
     @Override
     public List<User> fetch(Role role) {
         return repository.findAllByRole(role);
+    }
+
+    @Override
+    public User addDeliver(UserDTO dto) {
+        final var exists = repository.findByTgID(dto.getTgID());
+        if (exists.isPresent()) {
+            final var updateable = exists.get();
+            if (updateable.getRole() == Role.DELIVER) {
+                throw new AlreadyExistsException("TG_ID/Role",
+                        updateable.getTgID() + "/" + updateable.getRole(), User.class);
+            }
+            updateable.setRole(Role.DELIVER);
+            return repository.save(updateable);
+        } else {
+            return createUser(dto);
+        }
+    }
+
+    @Override
+    public User removeDeliver(String tgID) {
+        final var exists = repository.findByTgID(tgID);
+        User updatable = null;
+        if (exists.isPresent() && exists.get().getRole() == Role.DELIVER) {
+            updatable = exists.get();
+            updatable.setRole(Role.CUSTOMER);
+        } else {
+            throw new NotFoundException("TG_ID", tgID, User.class);
+        }
+        return repository.save(updatable);
+    }
+
+    private User createUser(UserDTO dto) {
+        var insertable = User.builder()
+                .tgID(dto.getTgID())
+                .phone(dto.getPhone())
+                .fullName(dto.getFullName())
+                .role(dto.getRole())
+                .build();
+        return repository.save(insertable);
     }
 }
